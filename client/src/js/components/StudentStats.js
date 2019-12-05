@@ -7,6 +7,7 @@ import {
   calculateIndividualCheckinData,
   calculateIndividualStandupsData,
   calculateIndividualWakatimeData,
+  calculateIndividualCommitData
 } from '../utilities';
 import EditStudent from './EditStudent';
 import {
@@ -68,16 +69,25 @@ class Standups extends Component {
         this.props.studentStandups
       );
     }
+
+    let commitData = [];
+   
+    commitData = calculateIndividualCommitData();
+    
+    console.log("commitData",commitData);
+
     let checkinData = [];
     if (this.props.studentCheckins) {
       checkinData = calculateIndividualCheckinData(this.props.studentCheckins);
     }
+
     let wakatimeData = [];
     if (this.props.studentWakatimes) {
       wakatimeData = calculateIndividualWakatimeData(
         this.props.studentWakatimes
       );
     }
+ 
     if (Object.keys(this.props.studentStandupsAndCheckins).length > 0) {
       StandupAndCheckinComponent = Object.entries(
         this.props.studentStandupsAndCheckins
@@ -119,12 +129,21 @@ class Standups extends Component {
     let keyClassMetrics = [];
     let keyStandupMetrics = [];
     let keyCodingMetrics = [];
+    let keyCommitMetrics = [];
 
     if (!!checkinData) {
       keyClassMetrics = checkinData.filter(function (obj) {
         return (obj.footer == "Time in class past 7 days") || (obj.footer == "weekly auto-checkouts");
       });
     }
+
+    if (!!commitData) {
+      keyCommitMetrics = [{featured: Hector,
+      footer: "Commits in the past 7 days",
+      measurement: "commits"}];
+      };
+    
+
 
     if (!!wakatimeData) {
       keyCodingMetrics = wakatimeData.filter(function (obj) {
@@ -138,16 +157,22 @@ class Standups extends Component {
       });
     }
 
+    var commits =[{featured: "7",
+    footer: "Commits in class past 7 days",
+    measurement: "hrs"}];
+
     keyMetrics = [
       ...keyClassMetrics,
       ...keyCodingMetrics,
-      ...keyStandupMetrics
+      ...keyStandupMetrics,
+      ...keyCommitMetrics
     ];
 
     let otherMetrics = [];
     let otherClassMetrics = [];
     let otherStandupMetrics = [];
     let otherCodingMetrics = [];
+ 
 
     if (!!checkinData) {
       otherClassMetrics = checkinData.filter(function (obj) {
@@ -233,6 +258,7 @@ function mapStoreToProps(store) {
     studentStandups: store.studentStats.studentStandups,
     studentCheckins: store.studentStats.studentCheckins,
     studentWakatimes: store.studentStats.studentWakatimes,
+    studentWakatimes: store.studentStats.studentCommits,
     studentStandupsAndCheckins: store.studentStats.studentStandupsAndCheckins,
     errMessage: store.studentStats.errMessage,
     editWindowOpen: store.studentStats.editWindowOpen,

@@ -1,4 +1,5 @@
 'use strict';
+const axios = require('axios');
 const today = new Date();
 function offsetDate(initialDate, dayOffset) {
   return new Date(initialDate.setDate(initialDate.getDate() + dayOffset));
@@ -122,6 +123,22 @@ function calculateIndividualStandupsData(standups) {
 }
 
 
+  function calculateIndividualCommitData() {
+    return axios.get(`https://api.github.com/users/$Hecano7/events`)
+      .then(response => {
+        response.data.map(data => {
+          let commitCount = 0;
+          if(!!data.payload.commits) commitCount = data.payload.commits.length;
+           
+    console.log("username",username);
+    console.log("commitCount",commitCount);
+           return commitCount;
+        })
+      })
+      .catch(error => console.error(error));
+   }
+  
+
 function calculateIndividualCheckinData(checkins) {
   if (checkins.length === 0) { return null; }
   // total time spent in classroom
@@ -200,6 +217,7 @@ function calculateIndividualWakatimeData(wt) {
       wakatimedateobj.duration = `${wakatime.duration}`
       return wakatimedateobj
   });
+
   //filters out duplicate object entries
   function getUniqueDates(arr, comp) {
     const unique = arr
@@ -269,5 +287,8 @@ module.exports = {
   calculateDashboardStandupsData,
   calculateIndividualStandupsData,
   calculateIndividualCheckinData,
-  calculateIndividualWakatimeData
+  calculateIndividualWakatimeData,
+  calculateIndividualCommitData
 };
+
+
