@@ -1,5 +1,6 @@
 'use strict';
 const axios = require('axios');
+var moment = require('moment');
 const today = new Date();
 function offsetDate(initialDate, dayOffset) {
   return new Date(initialDate.setDate(initialDate.getDate() + dayOffset));
@@ -122,22 +123,93 @@ function calculateIndividualStandupsData(standups) {
   ]);
 }
 
+function formatDate(date){
+
+  var dd = date.getDate();
+  var mm = date.getMonth()+1;
+  var yyyy = date.getFullYear();
+  if(dd<10) {dd='0'+dd}
+  if(mm<10) {mm='0'+mm}
+  date = mm+'/'+dd+'/'+yyyy;
+  return date
+}
+
+function Last7Days () {
+  var result = [];
+  for (var i=0; i<7; i++) {
+      var d = new Date();
+      d.setDate(d.getDate() - i);
+      result.push( formatDate(d) )
+  }
+  return(result);
+}
+
+  var hoy = moment().format(); 
+console.log(hoy);
+  var sevenDaysFromToday = Last7Days(hoy);
+  console.log(sevenDaysFromToday);
+
+  var order = [];
+  
+  sevenDaysFromToday.map(obj => {
+    var num = obj.slice(3,5);
+  order.push(num);
+});
+
+let indexes = [];
+
+function passed7Days (array) {
+    for (var i = 0; i < array.length; i++) {
+      var slice = array[i].slice(0, 10);
+      var split = slice.split("-");
+      split.toString();
+      if (order.includes(split[2])){
+          indexes.push(i);
+        }
+      }
+    }
+
+    console.log("indexes",indexes);
+  
+
+    // let information =["2019-12-05T18:22:13Z", "2019-12-05T18:17:48Z", "2019-11-26T22:47:07Z", "2019-11-26T22:33:03Z", "2019-11-25T01:20:34Z", "2019-11-21T17:55:01Z", "2019-11-21T17:52:22Z", "2019-11-21T17:52:11Z", "2019-11-21T17:51:59Z", "2019-11-21T17:51:47Z", "2019-11-21T02:57:14Z", "2019-11-21T02:56:37Z", "2019-11-21T02:55:46Z", "2019-11-21T02:53:35Z", "2019-11-21T02:53:22Z", "2019-11-21T02:44:37Z", "2019-11-21T02:34:16Z", "2019-11-21T02:30:47Z", "2019-11-21T02:27:56Z", "2019-11-18T19:16:15Z", "2019-11-17T18:35:47Z", "2019-11-17T01:45:49Z", "2019-11-16T00:25:57Z", "2019-11-15T22:44:23Z", "2019-11-12T20:45:48Z", "2019-11-12T20:42:50Z", "2019-11-12T20:16:53Z", "2019-11-12T20:15:08Z", "2019-11-12T20:13:14Z", "2019-11-10T05:36:39Z"];
+    //   passed7Days (information);
+    //   console.log("order",order);
 
   function calculateIndividualCommitData() {
-    return axios.get(`https://api.github.com/users/$Hecano7/events`)
-      .then(response => {
-        response.data.map(data => {
-          let commitCount = 0;
-          if(!!data.payload.commits) commitCount = data.payload.commits.length;
-           
-    console.log("username",username);
-    console.log("commitCount",commitCount);
-           return commitCount;
-        })
-      })
-      .catch(error => console.error(error));
-   }
-  
+    return axios.get(`https://api.github.com/users/Hecano7/events`)
+    .then(response => {
+      let commitDate = [];
+      response.data.map(data => {
+         if(data.created_at) {
+        commitDate.push(data.created_at);
+      }
+    })
+    console.log("response.data",response.data);
+    passed7Days(commitDate);
+    var position = [];
+    let commitCount = [];
+    indexes.map(num => {
+      commitCount.push(response.data[num]);
+    })
+    commitCount.map(data => {
+      console.log(data);
+        if(data.payload.commits !== undefined) {
+      position.push(data.payload.commits);
+      }
+    })
+      console.log("commitDate",commitDate);
+      // console.log("position",position);
+      // console.log("position",position);
+       console.log("commitCount",commitCount);
+      console.log("NUMBER",
+      position.reduce((a, b) => a + b, 0))
+      return position.length;
+    })
+    .catch(error => console.error(error));
+ }
+
+ calculateIndividualCommitData();
 
 function calculateIndividualCheckinData(checkins) {
   if (checkins.length === 0) { return null; }
@@ -288,7 +360,5 @@ module.exports = {
   calculateIndividualStandupsData,
   calculateIndividualCheckinData,
   calculateIndividualWakatimeData,
-  calculateIndividualCommitData
+  // calculateIndividualCommitData
 };
-
-
