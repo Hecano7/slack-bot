@@ -24,7 +24,7 @@ function mergeStudentData(studentStandupsAndCheckins) {
   return mergedData;
 }
 
-function getStudentStats(id, authToken, slack_id, github_id) {
+function getStudentStats(id, authToken, slack_id) {
   return dispatch => {
 
     const standups = dispatch({
@@ -83,7 +83,7 @@ export function getStudentInfo(id, authToken) {
           return data;
         })
     }).then(student => {
-      dispatch(getStudentStats(id, authToken, student.value.slack_id, student.value.github_id));
+      dispatch(getStudentStats(id, authToken, student.value.slack_id));
     });
   };
 }

@@ -30,6 +30,7 @@ class Standups extends Component {
 
   componentDidMount() {
     const id = this.props.location.pathname.replace("/student-summary/", "");
+    console.log("Id-this Is:",id);
     const { dispatch } = this.props;
     dispatch(getStudentInfo(id, this.props.authToken));
   }
@@ -69,7 +70,7 @@ class Standups extends Component {
         this.props.studentStandups
       );
     }
-
+    console.log("github_id",this.props.studentInfo.github_id)
     let commitData = [];
     if (this.props.studentInfo.github_id) {
       commitData = calculateIndividualCommitData(this.props.studentInfo.github_id);
@@ -80,7 +81,7 @@ class Standups extends Component {
     if (this.props.studentCheckins) {
       checkinData = calculateIndividualCheckinData(this.props.studentCheckins);
     }
-
+console.log("studentWakatimes",this.props.studentWakatimes)
     let wakatimeData = [];
     if (this.props.studentWakatimes) {
       wakatimeData = calculateIndividualWakatimeData(

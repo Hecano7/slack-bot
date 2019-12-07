@@ -196,13 +196,12 @@ function calculateIndividualStandupsData(standups) {
     numberOfCommits.push("commit");
     }
   })
-  console.log("commitDate",commitDate);
+  console.log("numberOfCommits.length",numberOfCommits.length);
     return numberOfCommits.length;
   })
   .catch(error => console.error(error));
 }
 
-calculateIndividualCommitData();
 
 console.log("indexes",indexes);
 console.log("theLastSevenDays",theLastSevenDays);
