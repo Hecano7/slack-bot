@@ -71,10 +71,10 @@ class Standups extends Component {
     }
 
     let commitData = [];
-   
-    commitData = calculateIndividualCommitData();
-    
-    console.log("commitData",commitData);
+    if (this.props.studentInfo.github_id) {
+      commitData = calculateIndividualCommitData(this.props.studentInfo.github_id);
+      console.log("commitData",commitData)
+    }
 
     let checkinData = [];
     if (this.props.studentCheckins) {
@@ -84,10 +84,9 @@ class Standups extends Component {
     let wakatimeData = [];
     if (this.props.studentWakatimes) {
       wakatimeData = calculateIndividualWakatimeData(
-        this.props.studentWakatimes
-      );
+        this.props.studentWakatimes);
     }
- 
+      
     if (Object.keys(this.props.studentStandupsAndCheckins).length > 0) {
       StandupAndCheckinComponent = Object.entries(
         this.props.studentStandupsAndCheckins
@@ -138,7 +137,7 @@ class Standups extends Component {
     }
 
     if (!!commitData) {
-      keyCommitMetrics = [{featured: Hector,
+      keyCommitMetrics = [{featured: commitData,
       footer: "Commits in the past 7 days",
       measurement: "commits"}];
       };
@@ -258,7 +257,7 @@ function mapStoreToProps(store) {
     studentStandups: store.studentStats.studentStandups,
     studentCheckins: store.studentStats.studentCheckins,
     studentWakatimes: store.studentStats.studentWakatimes,
-    studentWakatimes: store.studentStats.studentCommits,
+    studentGithubId: store.studentStats.studentGithubId,
     studentStandupsAndCheckins: store.studentStats.studentStandupsAndCheckins,
     errMessage: store.studentStats.errMessage,
     editWindowOpen: store.studentStats.editWindowOpen,

@@ -1,5 +1,6 @@
 import moment from "moment";
 
+
 function mergeStudentData(studentStandupsAndCheckins) {
   let mergedData = {};
   const checkins = studentStandupsAndCheckins[1].value;
@@ -23,8 +24,9 @@ function mergeStudentData(studentStandupsAndCheckins) {
   return mergedData;
 }
 
-function getStudentStats(id, authToken, slack_id) {
+function getStudentStats(id, authToken, slack_id, github_id) {
   return dispatch => {
+
     const standups = dispatch({
       type: "GET_STUDENT_STANDUPS",
       payload: fetch(`/api/students/${id}/standups?access_token=${authToken}`)
@@ -81,7 +83,7 @@ export function getStudentInfo(id, authToken) {
           return data;
         })
     }).then(student => {
-      dispatch(getStudentStats(id, authToken, student.value.slack_id));
+      dispatch(getStudentStats(id, authToken, student.value.slack_id, student.value.github_id));
     });
   };
 }
