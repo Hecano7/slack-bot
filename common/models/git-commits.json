@@ -1,5 +1,5 @@
 {
-  "name": "absence",
+  "name": "gitCommits",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
@@ -9,6 +9,11 @@
     "slack_id": {
       "type": "string",
       "required": true
+    },
+    "commits": {
+      "type": "number",
+      "required": true,
+      "default": 0
     },
     "date": {
       "type": "Date",
@@ -35,6 +40,13 @@
       "principalType": "ROLE",
       "principalId": "admin",
       "permission": "ALLOW"
+    },
+
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$unauthenticated",
+      "permission": "DENY"
     }
   ],
   "methods": {}

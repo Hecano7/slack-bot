@@ -3,10 +3,12 @@ const defaultState = {
   studentStandups: [],
   studentCheckins: [],
   studentWakatimes: [],
+  studentCommits: [],
   studentStandupsAndCheckins: [],
   errMessage: "",
   editWindowOpen: false
 };
+
 export default function studentStatsReducer(state = defaultState, action) {
   const { type, payload } = action;
   switch (type) {
@@ -32,6 +34,12 @@ export default function studentStatsReducer(state = defaultState, action) {
       return {
         ...state,
         studentWakatimes: payload
+      };
+    }
+    case "GET_STUDENT_COMMITS_FULFILLED": {
+      return {
+        ...state,
+        studentCommits: payload
       };
     }
     case "GET_STANDUPS_AND_CHECKINS": {

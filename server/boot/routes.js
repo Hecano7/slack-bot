@@ -27,6 +27,8 @@ module.exports = (app) => {
     callback();
   })
 
+  // #region Slack-bot Routes
+
   app.post('/slack/doorbell', (req, res) => {
     res.send('Ringing the doorbell');
     handleEvent(req.body, 'doorbell');
@@ -51,7 +53,6 @@ module.exports = (app) => {
     handleEvent(req.body, 'wakatime');
     res.status(200).send('');
   });
-
 
   app.post('/slack/events', (req, res) => {
     if (req.body.type === 'url_verification') {
@@ -157,7 +158,6 @@ module.exports = (app) => {
     res.render('index', { user, channel, checkin, token: process.env.token, notatschool });
   });
 
-
   app.post('/submitNotAtSchool', (req, res) => {
     if (req.body.token == process.env.token || '0'){
       if (req.body.checkin === 'true') {
@@ -219,6 +219,8 @@ module.exports = (app) => {
         break;
     }
   };
+
+// #end-region Slack-bot Routes
 
   // 9:00am
   const morningReminder = schedule.scheduleJob({ hour: 9, minute: 0 }, () => {
@@ -294,8 +296,7 @@ module.exports = (app) => {
           };
         });
       }
-    })
-  });
+    })  });
 
   // 6:15pm
   const lateCheckOutReminder = schedule.scheduleJob({ hour: 18, minute: 15 }, () => {
@@ -414,45 +415,45 @@ module.exports = (app) => {
         getWakatimeDuration(studentQueue.next());
       })
 
-    function* studentsGenerator(students) {
-      for (let i = 0; i < students.length; i++) {
-        yield students[i];
-      }
+  });    
+
+  function* studentsGenerator(students) {
+    for (let i = 0; i < students.length; i++) {
+      yield students[i];
+    }
+  }
+
+  function getWakatimeDuration(student) {
+    if (student.done) {
+      return;
     }
 
-    function getWakatimeDuration(student) {
-      if (student.done) {
-        return;
+    axios({
+      'method': 'get',
+      'url': `https://wakatime.com/api/v1/users/current/durations?date=${formattedDate}`,
+      'headers': {
+        'Authorization': `Basic ${Buffer.from(student.value.wakatime_key).toString('base64')}`
       }
-
-      axios({
-        'method': 'get',
-        'url': `https://wakatime.com/api/v1/users/current/durations?date=${formattedDate}`,
-        'headers': {
-          'Authorization': `Basic ${Buffer.from(student.value.wakatime_key).toString('base64')}`
-        }
+    })
+      .then(res => {
+        saveToDatabase(student.value.slack_id, Date.now() - secondsInADay, res.data.data.reduce((sum, codingPeriod) => {
+          return sum + codingPeriod.duration;
+        }, 0))
+        getWakatimeDuration(studentQueue.next());
       })
-        .then(res => {
-          saveToDatabase(student.value.slack_id, Date.now() - secondsInADay, res.data.data.reduce((sum, codingPeriod) => {
-            return sum + codingPeriod.duration;
-          }, 0))
-          getWakatimeDuration(studentQueue.next());
-        })
-        .catch(e => {
-          console.log(e);
-          getWakatimeDuration(studentQueue.next());
-        })
+      .catch(e => {
+        console.log(e);
+        getWakatimeDuration(studentQueue.next());
+      })
 
-      function saveToDatabase(slack_id, date, duration) {
-        app.models.wakatime.create({
-          'duration': duration,
-          'slack_id': slack_id,
-          'date': date
-        });
-      }
+    function saveToDatabase(slack_id, date, duration) {
+      app.models.wakatime.create({
+        'duration': duration,
+        'slack_id': slack_id,
+        'date': date
+      });
     }
-  })
-
+  }
 
   function doorbell(user, channel) {
     var params = {
@@ -708,27 +709,27 @@ module.exports = (app) => {
     Promise.all(checkouts).then().catch(err => console.log(err));
 	};
 
-function notAtSchool(user, channel){
+  function notAtSchool(user, channel){
 
-  app.models.checkin
-          .create({
-            checkin_time: new Date(),
-            checkout_time: new Date(),
-            slack_id: user.user_id,
-            hours: 0,
-            notAtSchool: true
-          })
+    app.models.checkin
+            .create({
+              checkin_time: new Date(),
+              checkout_time: new Date(),
+              slack_id: user.user_id,
+              hours: 0,
+              notAtSchool: true
+            })
 
- let params = {
-     icon_emoji: ':smiley:',
-     };
+  let params = {
+      icon_emoji: ':smiley:',
+      };
 
-  bot.postEphemeral(
-      user.channel_id,
-      user.user_id,
-      `Not at school status has been logged. Have a nice day!`,
-      params);
-}
+    bot.postEphemeral(
+        user.channel_id,
+        user.user_id,
+        `Not at school status has been logged. Have a nice day!`,
+        params);
+  }
 
   function registerWakatimeKey(user, channel) {
     axios({
@@ -781,7 +782,6 @@ function notAtSchool(user, channel){
       addStudentToStudentsArray(result);
     }
   }
-
 
 	function registerNewStudent(user, channel){
 		let currentStudent = students.find(s => {

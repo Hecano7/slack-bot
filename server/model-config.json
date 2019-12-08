@@ -68,5 +68,9 @@
   "absence": {
     "dataSource": "mongod",
     "public": true
+  },
+  "gitCommits": {
+    "dataSource": "mongod",
+    "public": true
   }
 }

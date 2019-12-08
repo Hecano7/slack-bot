@@ -6,18 +6,18 @@
     "validateUpsert": true
   },
   "properties": {
-		"slack_id": {
-			"type": "string",
-			"required": true
-		},
-		"duration": {
-			"type": "number",
-			"require": true
-		},
-		"date":{
-			"type": "Date",
-			"require": true
-		}
+    "slack_id": {
+      "type": "string",
+      "required": true
+    },
+    "duration": {
+      "type": "number",
+      "require": true
+    },
+    "date": {
+      "type": "Date",
+      "require": true
+    }
   },
   "validations": [],
   "relations": {

@@ -13,15 +13,15 @@
     "name": {
       "type": "string",
       "required": true
-		},
-		"wakatime_key": {
-			"type": "string",
-			"required": false
-		},
-		"type": {
-			"type": "string",
-			"require": true
-		}
+    },
+    "wakatime_key": {
+      "type": "string",
+      "required": false
+    },
+    "type": {
+      "type": "string",
+      "require": true
+    }
   },
   "validations": [],
   "relations": {

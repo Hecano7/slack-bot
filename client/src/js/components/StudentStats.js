@@ -30,7 +30,6 @@ class Standups extends Component {
 
   componentDidMount() {
     const id = this.props.location.pathname.replace("/student-summary/", "");
-    console.log("Id-this Is:",id);
     const { dispatch } = this.props;
     dispatch(getStudentInfo(id, this.props.authToken));
   }
@@ -70,23 +69,25 @@ class Standups extends Component {
         this.props.studentStandups
       );
     }
-    console.log("github_id",this.props.studentInfo.github_id)
-    let commitData = [];
-    if (this.props.studentInfo.github_id) {
-      commitData = calculateIndividualCommitData(this.props.studentInfo.github_id);
-      console.log("commitData",commitData)
-    }
 
+    console.log("studentCommits",this.props);
+    let commitData = [];
+    // if (this.props.studentCommits) {
+    //   commitData = 7;
+    // }
+  
     let checkinData = [];
     if (this.props.studentCheckins) {
       checkinData = calculateIndividualCheckinData(this.props.studentCheckins);
     }
-console.log("studentWakatimes",this.props.studentWakatimes)
+
     let wakatimeData = [];
     if (this.props.studentWakatimes) {
-      wakatimeData = calculateIndividualWakatimeData(
-        this.props.studentWakatimes);
+      wakatimeData = calculateIndividualWakatimeData(this.props.studentWakatimes);
+      console.log("This WakaTime: ",this.props.studentWakatimes);
     }
+    console.log("WakaTime Data: ",wakatimeData);
+
       
     if (Object.keys(this.props.studentStandupsAndCheckins).length > 0) {
       StandupAndCheckinComponent = Object.entries(
@@ -137,29 +138,29 @@ console.log("studentWakatimes",this.props.studentWakatimes)
       });
     }
 
+    // if (!!commitData) {
+    //   keyCodingMetrics = commitData.filter(function (obj){
+    //     return (obj.footer == "GitHub Commits for the past 7 days");
+    //   });
+    // }
+
     if (!!commitData) {
-      keyCommitMetrics = [{featured: commitData,
-      footer: "Commits in the past 7 days",
-      measurement: "commits"}];
-      };
-    
-
-
-    if (!!wakatimeData) {
-      keyCodingMetrics = wakatimeData.filter(function (obj) {
-        return (obj.footer == "Time coding past 7 days");
-      });
+      keyCommitMetrics = [{featured: 3,
+        footer: "Commits in the past 7 days",
+        measurement: "commits"}];  
     }
+    
+    // if (!!wakatimeData) {
+    //   keyCodingMetrics = wakatimeData.filter(function (obj) {
+    //     return (obj.footer == "Time coding past 7 days");
+    //   });
+    // }
 
     if (!!standupsData) {
       keyStandupMetrics = standupsData.filter(function (obj) {
         return (obj.footer == "Standups completed past 7 days");
       });
     }
-
-    var commits =[{featured: "7",
-    footer: "Commits in class past 7 days",
-    measurement: "hrs"}];
 
     keyMetrics = [
       ...keyClassMetrics,
@@ -225,6 +226,7 @@ console.log("studentWakatimes",this.props.studentWakatimes)
             checkinData={this.props.studentCheckins}
             standupData={this.props.studentStandups}
             wakatimeData={this.props.studentWakatimes}
+            commitData={this.props.studentCommits}
             name={this.props.studentInfo.name}
             />
           </div>
@@ -258,7 +260,7 @@ function mapStoreToProps(store) {
     studentStandups: store.studentStats.studentStandups,
     studentCheckins: store.studentStats.studentCheckins,
     studentWakatimes: store.studentStats.studentWakatimes,
-    studentGithubId: store.studentStats.studentGithubId,
+    studentCommits: store.studentStats.studentCommits,
     studentStandupsAndCheckins: store.studentStats.studentStandupsAndCheckins,
     errMessage: store.studentStats.errMessage,
     editWindowOpen: store.studentStats.editWindowOpen,

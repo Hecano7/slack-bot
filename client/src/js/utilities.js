@@ -6,13 +6,12 @@ var moment = require('moment');
 const today = new Date();
 
 var todayFormat = moment().format();
-var sevenDaysFromToday = Last7Days(todayFormat);
+var sevenDaysFromToday = LastSevenDays(todayFormat);
 var theLastSevenDays = [];
 var numberOfCommits = [];
 let indexes = [];
 
-let seventhDayFromToday = moment().subtract(7, "days").calendar();
-console.log("seventhDayFromToday",seventhDayFromToday);
+
 function offsetDate(initialDate, dayOffset) {
   return new Date(initialDate.setDate(initialDate.getDate() + dayOffset));
 }
@@ -36,7 +35,7 @@ function formatDate(date){
   return date
 }
 
-function Last7Days () {
+function LastSevenDays () {
   var result = [];
   for (var i=0; i<7; i++) {
       var newDate = new Date();
@@ -46,7 +45,7 @@ function Last7Days () {
   return(result);
 }
 
-function passed7Days (array) {
+function pastSevenDays (array) {
   for (var i = 0; i < array.length; i++) {
     var extract = array[i].slice(0, 10);
     var seperate = extract.split("-");
@@ -56,7 +55,6 @@ function passed7Days (array) {
       }
     }
 }
-
 
 sevenDaysFromToday.map(obj => {
     var num = obj.slice(3,5);
@@ -175,37 +173,36 @@ function calculateIndividualStandupsData(standups) {
   ]);
 }
 
- function calculateIndividualCommitData(username) {
-  return axios.get(`https://api.github.com/users/${username}/events`)
-  .then(response => {
-    let commitDate = [];
+//  function calculateIndividualCommitData(username) {
+//   axios({
+//     'method': 'GET',
+//     'url': (`https://api.github.com/users/${username}/events`)
+//     })
+//   .then(response => {
+//     let commitDate = [];
 
-    response.data.map(data => {
-        commitDate.push(data.created_at);
-  })
+//     response.data.map(data => {
+//         commitDate.push(data.created_at);
+//   })
 
-  passed7Days(commitDate);
-  let lastSevenDays = [];
+//   pastSevenDays(commitDate);
+//   let lastSevenDays = [];
 
-  indexes.map(num => {
-    lastSevenDays.push(response.data[num]);
-  })
+//   indexes.map(num => {
+//     lastSevenDays.push(response.data[num]);
+//   })
 
-  lastSevenDays.map(data => {
-     if(data.type == "PushEvent") {
-    numberOfCommits.push("commit");
-    }
-  })
-  console.log("numberOfCommits.length",numberOfCommits.length);
-    return numberOfCommits.length;
-  })
-  .catch(error => console.error(error));
-}
-
-
-console.log("indexes",indexes);
-console.log("theLastSevenDays",theLastSevenDays);
-console.log("sevenDaysFromToday",sevenDaysFromToday);
+//   lastSevenDays.map(data => {
+//      if(data.type == "PushEvent") {
+//     numberOfCommits.push("commit");
+//     }
+//   })
+  
+//   console.log("numberOfCommits.length",numberOfCommits.length);
+//     return numberOfCommits.length;
+//   })
+//   .catch(error => console.error(error));
+// }
 
 function calculateIndividualCheckinData(checkins) {
   if (checkins.length === 0) { return null; }
@@ -286,7 +283,7 @@ function calculateIndividualWakatimeData(wt) {
       wakatimedateobj.duration = `${wakatime.duration}`
       return wakatimedateobj
   });
-
+  
   //filters out duplicate object entries
   function getUniqueDates(arr, comp) {
     const unique = arr
@@ -297,7 +294,9 @@ function calculateIndividualWakatimeData(wt) {
       .filter(e => arr[e]).map(e => arr[e]);
      return unique;
   }
-let wakatimes = getUniqueDates(wakatimeDates,'date')
+  
+  let wakatimes = getUniqueDates(wakatimeDates,'date');
+
   if (wakatimes.length == 0) { return null; }
  // total time spent in classroom
   let totalSeconds = wakatimes.reduce((accumulator, wakatime) => {
@@ -357,6 +356,6 @@ module.exports = {
   calculateDashboardStandupsData,
   calculateIndividualStandupsData,
   calculateIndividualCheckinData,
-  calculateIndividualWakatimeData,
-  calculateIndividualCommitData
+  calculateIndividualWakatimeData
+  // calculateIndividualCommitData
 };
