@@ -72,9 +72,9 @@ class Standups extends Component {
 
     console.log("studentCommits",this.props);
     let commitData = [];
-    // if (this.props.studentCommits) {
-    //   commitData = 7;
-    // }
+    if (this.props.studentCommits) {
+      commitData = this.props.studentCommits.length;
+    }
   
     let checkinData = [];
     if (this.props.studentCheckins) {
@@ -84,10 +84,7 @@ class Standups extends Component {
     let wakatimeData = [];
     if (this.props.studentWakatimes) {
       wakatimeData = calculateIndividualWakatimeData(this.props.studentWakatimes);
-      console.log("This WakaTime: ",this.props.studentWakatimes);
     }
-    console.log("WakaTime Data: ",wakatimeData);
-
       
     if (Object.keys(this.props.studentStandupsAndCheckins).length > 0) {
       StandupAndCheckinComponent = Object.entries(
@@ -131,7 +128,7 @@ class Standups extends Component {
     let keyStandupMetrics = [];
     let keyCodingMetrics = [];
     let keyCommitMetrics = [];
-
+    
     if (!!checkinData) {
       keyClassMetrics = checkinData.filter(function (obj) {
         return (obj.footer == "Time in class past 7 days") || (obj.footer == "weekly auto-checkouts");
@@ -145,7 +142,7 @@ class Standups extends Component {
     // }
 
     if (!!commitData) {
-      keyCommitMetrics = [{featured: 3,
+      keyCommitMetrics = [{featured: commitData,
         footer: "Commits in the past 7 days",
         measurement: "commits"}];  
     }
