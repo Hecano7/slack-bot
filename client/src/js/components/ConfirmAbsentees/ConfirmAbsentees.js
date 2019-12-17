@@ -17,10 +17,11 @@ class ConfirmAbsentees extends React.Component {
 
     confirm() {
         const { unexcusedAbsentees } = this.state;
+        console.log(unexcusedAbsentees);
         const { dispatch } = this.props;
         var slack_ids = unexcusedAbsentees.map(absentee => {
             if (absentee.absent) {
-                let today = moment().format();
+                const today = moment().format();
                 let absence = {
                     "slack_id": absentee.slack_id,
                     "date": today
@@ -46,19 +47,22 @@ class ConfirmAbsentees extends React.Component {
         }
     }
 
-    componentDidMount() {
-        const { activeCheckins, students } = this.props;
-        let absentees = calculateAbsentees(activeCheckins, students);
-        this.setState({
-            unexcusedAbsentees: absentees,
-        })
-    }
+    // componentDidMount() {
+    //     const { activeCheckins, students } = this.props;
+    //     let studentsPaid = students.filter(student => student.type == "PAID");
+    //     let absentees = calculateAbsentees(activeCheckins, studentsPaid);
+    //     this.setState({
+    //         unexcusedAbsentees: absentees,
+    //     })
+    // }
 
     render() {
         const { activeCheckins, students } = this.props;
+        let studentsPaid = students.filter(student => student.type == "PAID");
+        console.log(this.state.unexcusedAbsentees);
         let absentees = [];
         if (!!students) {
-            absentees = calculateAbsentees(activeCheckins, students);
+            absentees = calculateAbsentees(activeCheckins, studentsPaid);
         }
         return (
             <div className='add-edit-student-window' onClick={this.props.closeWindow(event)}>

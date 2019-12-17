@@ -94,8 +94,6 @@ module.exports = function(Checkin) {
       .catch(err => console.log(err));
   };
 
-
-
   Checkin.remoteMethod(
     'getBySlackId', {
       http: {
@@ -127,7 +125,6 @@ module.exports = function(Checkin) {
       returns: {arg: 'checkins', type: ['checkin'], root: true},
     }
   );
-
 
   Checkin.remoteMethod(
     'active', {

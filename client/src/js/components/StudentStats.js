@@ -70,7 +70,6 @@ class Standups extends Component {
       );
     }
 
-    console.log("studentCommits",this.props);
     let commitData = [];
     if (this.props.studentCommits) {
       commitData = this.props.studentCommits.length;

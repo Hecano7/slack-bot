@@ -4,6 +4,7 @@ const loopback = require('loopback');
 const boot = require('loopback-boot');
 const path = require('path');
 const session = require('express-session');
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 require('dotenv').config()
 const app = module.exports = loopback();
 
@@ -66,7 +67,7 @@ app.get('/auth', (req, res) => {
   ensureAuthorized(token)
     .then(response => {
       if (response === 'AUTHORIZED') {
-        res.redirect(`/dashboard?auth_token=${token}`);
+        res.redirect(`/dashboard`);
       } else {
         res.redirect('/login');
       }
@@ -79,6 +80,7 @@ app.get('/auth', (req, res) => {
 
 app.get('/dashboard', (req, res) => {
   const token = req.query.auth_token;
+  console.log(token);
   ensureAuthorized(token)
     .then(response => {
       if (response === 'AUTHORIZED') {
@@ -104,6 +106,7 @@ app.post('/dashboard', (req, res) => {
     if (err) {
       return res.status(401).redirect('/login');
     }
+    // console.log(token);
     token = token.toJSON();
     res.redirect(`/dashboard?auth_token=${token.id}`);
   });
@@ -140,6 +143,8 @@ app.get('/inactive', (req, res) => {
       res.redirect('/login');
     });
 });
+
+
 
 app.get('/logout', (req, res, next) => {
   if (req.query.auth_token) {

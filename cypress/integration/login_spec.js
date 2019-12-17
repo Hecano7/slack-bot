@@ -8,6 +8,6 @@ describe("Login Test", function() {
       .type(Cypress.env("ADMIN_PASSWORD"))
       .should("have.value", Cypress.env("ADMIN_PASSWORD"));
     cy.contains("Login").click();
-    cy.url().should("include", "/dashboard");
+    cy.url().should("include", "/dashboard","/explorer");
   });
 });
